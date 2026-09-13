@@ -23,7 +23,7 @@ export function SiteHeader() {
             />
             <span className="flex items-baseline gap-2">
               <span className="text-sm font-semibold text-slate-900">
-                Docs
+                Pelatihan AI untuk Guru
               </span>
             </span>
           </Link>

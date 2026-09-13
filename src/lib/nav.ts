@@ -5,8 +5,8 @@
  * flattened `allPages` list powers the previous/next pagination at the
  * bottom of every page.
  *
- * This is placeholder content — replace the entries below with your own
- * pages once you're ready to fill in real material.
+ * Content lives in `src-materi/Sesi-*.md` — each entry below is the web
+ * version of one training session ("sesi") from that source material.
  */
 
 export type DocLink = {
@@ -32,25 +32,40 @@ export const navGroups: NavGroup[] = [
         navLabel: "Home / Welcome",
         href: "/",
       },
-      {
-        title: "Installation",
-        navLabel: "Installation",
-        href: "/docs/installation",
-      },
     ],
   },
   {
-    title: "Guides",
+    title: "Materi Pelatihan",
     links: [
       {
-        title: "First Guide",
-        navLabel: "First Guide",
-        href: "/docs/guides/first-guide",
+        title: "Sesi 1: Mengenal LLM & AI dalam Pendidikan",
+        navLabel: "Sesi 1 — Mengenal LLM & AI",
+        href: "/sesi-1",
       },
       {
-        title: "Second Guide",
-        navLabel: "Second Guide",
-        href: "/docs/guides/second-guide",
+        title: "Sesi 2: LLM sebagai Asisten Guru",
+        navLabel: "Sesi 2 — LLM sebagai Asisten Guru",
+        href: "/sesi-2",
+      },
+      {
+        title: "Sesi 3: Prompt Engineering untuk Guru",
+        navLabel: "Sesi 3 — Prompt Engineering",
+        href: "/sesi-3",
+      },
+      {
+        title: "Sesi 4: Kelas Prompt — Buat Materi Bareng AI",
+        navLabel: "Sesi 4 — Hands-on: Kelas Prompt",
+        href: "/sesi-4",
+      },
+      {
+        title: "Sesi 5: Critical Thinking & Fact Checking",
+        navLabel: "Sesi 5 — Critical Thinking",
+        href: "/sesi-5",
+      },
+      {
+        title: "Sesi 6: Etika, Privasi & Integritas Akademik",
+        navLabel: "Sesi 6 — Etika & Privasi",
+        href: "/sesi-6",
       },
     ],
   },

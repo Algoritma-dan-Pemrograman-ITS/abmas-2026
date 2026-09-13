@@ -22,10 +22,11 @@ const jetBrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "Docs",
-    template: "%s | Docs",
+    default: "Pelatihan AI untuk Guru",
+    template: "%s | Abmas 2026",
   },
-  description: "Documentation site.",
+  description:
+    "Materi pelatihan penggunaan Large Language Model (LLM) untuk guru: mengenal AI, menyiapkan bahan ajar, prompt engineering, berpikir kritis, dan etika penggunaan AI di sekolah.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
@@ -71,7 +72,7 @@ function SiteFooter() {
   return (
     <footer className="mt-8 border-t border-slate-200">
       <div className="mx-auto flex max-w-8xl flex-col items-start justify-between gap-3 px-4 py-8 text-sm text-slate-500 sm:flex-row sm:items-center sm:px-6 lg:px-8">
-        <p>© {new Date().getFullYear()} Your Organization.</p>
+        <p>© {new Date().getFullYear()} AP Lab. Materi Pelatihan Abmas.</p>
         <div className="flex items-center gap-5">
           <a
             href="#"
