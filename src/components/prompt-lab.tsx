@@ -4,28 +4,41 @@ import { useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import { CodeBlock } from "@/components/code-block";
 import { CheckIcon, CopyIcon, RefreshIcon } from "@/components/icons";
+import { gradePrompt, GradePromptError } from "@/lib/grade-prompt";
+import { GradeResultPanel, type GradeStatus } from "@/components/grade-result";
+import type { GradeResult } from "@/lib/grade-prompt-types";
 
 /**
  * "Kelas Prompt: Buat Materi Bareng AI" — the Sesi 4 hands-on tool.
  *
- * Five tabs walk a teacher through the ROLE + CONTEXT + TASK + CONSTRAINT +
- * OUTPUT framework from Sesi 3 on their own class material:
+ * Seven tabs walk a teacher through the ROLE + CONTEXT + TASK + CONSTRAINT +
+ * OUTPUT framework from Sesi 3, first with scaffolding, then unaided:
  *
  *   1. Konteks       — a form collects the raw ingredients.
  *   2. Susun Prompt  — the ingredients are assembled into an editable prompt.
  *   3. Generate      — the teacher runs that prompt in their own AI tool of
  *                       choice and pastes the reply back in (this project has
- *                       no backend AI integration, so the "generation" step
- *                       is a copy-out/paste-back bridge rather than a live
- *                       API call).
+ *                       no backend AI integration for this step, so
+ *                       "generation" is a copy-out/paste-back bridge rather
+ *                       than a live API call).
  *   4. Improve       — iterative prompting: quick-fix chips or a free-form
  *                       note become the next message in that same AI
  *                       conversation, and the revised reply is pasted back.
  *                       Can repeat several rounds.
  *   5. Finalisasi    — the latest result, editable and ready to copy.
+ *   6. Latihan Mandiri — no more scaffolding: the app assigns one task from
+ *                       a fixed set and the teacher writes a prompt for it
+ *                       from scratch, then a "Nilai Prompt Saya" button
+ *                       sends it to POST /api/grade-prompt (a real backend
+ *                       call — see src/app/api/grade-prompt/route.ts, which
+ *                       proxies to an Ollama-compatible server) for a 0-100
+ *                       score plus a ROLE/CONTEXT/TASK/CONSTRAINT/OUTPUT
+ *                       breakdown.
+ *   7. Tantangan Anda — same grading flow, but the teacher also picks their
+ *                       own task instead of an assigned one.
  *
- * State for all five steps lives here and is never cleared by switching
- * tabs or pressing "Kembali", only by the explicit "Mulai dari Awal" reset.
+ * State for all steps lives here and is never cleared by switching tabs or
+ * pressing "Kembali", only by the explicit "Mulai dari Awal" reset.
  */
 
 type FormValues = {
@@ -121,7 +134,39 @@ const STEPS = [
   { id: 3, label: "Generate" },
   { id: 4, label: "Improve" },
   { id: 5, label: "Finalisasi" },
+  { id: 6, label: "Latihan Mandiri" },
+  { id: 7, label: "Tantangan Anda" },
 ] as const;
+
+type Scenario = { id: string; text: string };
+
+/** Fixed pool for Langkah 6 — one is assigned at random, no reroll. */
+const SCENARIOS: Scenario[] = [
+  {
+    id: "ipa-tata-surya",
+    text: "Buatlah prompt untuk meminta AI menyusun 5 soal IPA kelas 4 tentang tata surya, lengkap dengan kunci jawaban.",
+  },
+  {
+    id: "matematika-pecahan",
+    text: "Buatlah prompt untuk meminta AI menjelaskan konsep pecahan sederhana bagi siswa kelas 3 yang masih kesulitan membedakan pembilang dan penyebut, disertai 3 contoh yang dekat dengan kehidupan sehari-hari.",
+  },
+  {
+    id: "b-indonesia-surat",
+    text: "Buatlah prompt untuk meminta AI membuat contoh surat pribadi kepada sahabat untuk materi menulis kelas 5, beserta rubrik penilaian sederhana.",
+  },
+  {
+    id: "ips-keragaman-budaya",
+    text: "Buatlah prompt untuk meminta AI menyusun ringkasan materi keragaman budaya Indonesia untuk kelas 4, dengan satu aktivitas diskusi kelompok yang bisa selesai dalam 20 menit.",
+  },
+  {
+    id: "pkn-hak-kewajiban",
+    text: "Buatlah prompt untuk meminta AI membuat cerita pendek yang menggambarkan hak dan kewajiban anak di rumah untuk siswa kelas 3, dilengkapi 3 pertanyaan diskusi.",
+  },
+];
+
+function pickScenario(): Scenario {
+  return SCENARIOS[Math.floor(Math.random() * SCENARIOS.length)];
+}
 
 /** Builds the Langkah 2 prompt exactly per the Sesi 4 spec's template. */
 function buildPrompt(form: FormValues): string {
@@ -173,6 +218,20 @@ export function PromptLab() {
   const improveRef = useRef<HTMLTextAreaElement>(null);
 
   const [finalText, setFinalText] = useState("");
+
+  // Langkah 6 — Latihan Mandiri (assigned task)
+  const [step6Task, setStep6Task] = useState<Scenario | null>(null);
+  const [step6Prompt, setStep6Prompt] = useState("");
+  const [step6Status, setStep6Status] = useState<GradeStatus>("idle");
+  const [step6Result, setStep6Result] = useState<GradeResult | null>(null);
+  const [step6Error, setStep6Error] = useState<string | null>(null);
+
+  // Langkah 7 — Tantangan Anda Sendiri (self-chosen task)
+  const [step7TaskDesc, setStep7TaskDesc] = useState("");
+  const [step7Prompt, setStep7Prompt] = useState("");
+  const [step7Status, setStep7Status] = useState<GradeStatus>("idle");
+  const [step7Result, setStep7Result] = useState<GradeResult | null>(null);
+  const [step7Error, setStep7Error] = useState<string | null>(null);
 
   const latestResult = revisions.length > 0 ? revisions[revisions.length - 1].result : step3Result;
 
@@ -249,6 +308,46 @@ export function PromptLab() {
     setMaxUnlocked((m) => Math.max(m, 5));
   }
 
+  function handleStep5Advance() {
+    if (!step6Task) setStep6Task(pickScenario());
+    completeStep(5, 6);
+  }
+
+  async function handleGradeStep6() {
+    if (step6Prompt.trim() === "" || !step6Task) return;
+    setStep6Status("pending");
+    setStep6Error(null);
+    try {
+      const result = await gradePrompt({ task: step6Task.text, prompt: step6Prompt });
+      setStep6Result(result);
+      setStep6Status("success");
+      setCompleted((c) => ({ ...c, 6: true }));
+      setMaxUnlocked((m) => Math.max(m, 7));
+    } catch (err) {
+      setStep6Error(
+        err instanceof GradePromptError ? err.message : "Gagal menghubungi server penilai. Coba lagi."
+      );
+      setStep6Status("error");
+    }
+  }
+
+  async function handleGradeStep7() {
+    if (step7TaskDesc.trim() === "" || step7Prompt.trim() === "") return;
+    setStep7Status("pending");
+    setStep7Error(null);
+    try {
+      const result = await gradePrompt({ task: step7TaskDesc, prompt: step7Prompt });
+      setStep7Result(result);
+      setStep7Status("success");
+      setCompleted((c) => ({ ...c, 7: true }));
+    } catch (err) {
+      setStep7Error(
+        err instanceof GradePromptError ? err.message : "Gagal menghubungi server penilai. Coba lagi."
+      );
+      setStep7Status("error");
+    }
+  }
+
   function resetAll() {
     setActiveStep(1);
     setMaxUnlocked(1);
@@ -264,6 +363,16 @@ export function PromptLab() {
     setReviseResult("");
     setRevisions([]);
     setFinalText("");
+    setStep6Task(null);
+    setStep6Prompt("");
+    setStep6Status("idle");
+    setStep6Result(null);
+    setStep6Error(null);
+    setStep7TaskDesc("");
+    setStep7Prompt("");
+    setStep7Status("idle");
+    setStep7Result(null);
+    setStep7Error(null);
   }
 
   return (
@@ -646,6 +755,177 @@ export function PromptLab() {
             <button
               type="button"
               onClick={() => goToStep(4)}
+              className="text-sm font-medium text-slate-600 hover:text-slate-900"
+            >
+              ← Kembali
+            </button>
+            <div className="flex flex-wrap items-center gap-3">
+              <button
+                type="button"
+                onClick={resetAll}
+                className="inline-flex items-center gap-2 rounded-md border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50"
+              >
+                <RefreshIcon className="h-4 w-4" />
+                Mulai dari Awal
+              </button>
+              <button
+                type="button"
+                onClick={handleStep5Advance}
+                disabled={finalText.trim() === ""}
+                className={cn(
+                  primaryButtonClass,
+                  finalText.trim() !== ""
+                    ? "bg-slate-900 text-white hover:bg-slate-700"
+                    : "cursor-not-allowed bg-slate-100 text-slate-400"
+                )}
+              >
+                Lanjut ke Latihan Mandiri →
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
+      {activeStep === 6 ? (
+        <div className="space-y-4">
+          <div>
+            <h2 className="text-lg font-semibold text-slate-900">
+              Langkah 6 — Latihan Mandiri
+            </h2>
+            <p className="mt-1 text-sm text-slate-600">
+              Sekarang coba tanpa bantuan formulir. Tulis satu prompt lengkap
+              untuk tugas berikut, lalu minta AI menilainya.
+            </p>
+          </div>
+
+          <div className="rounded-md border border-sky-200 bg-sky-50/50 p-4 text-sm text-sky-900">
+            {step6Task?.text}
+          </div>
+
+          <label className="block text-sm">
+            <span className="mb-1 block font-medium text-slate-700">Prompt Anda</span>
+            <textarea
+              value={step6Prompt}
+              onChange={(e) => setStep6Prompt(e.target.value)}
+              rows={10}
+              placeholder="Tulis prompt lengkap Anda di sini..."
+              className={textareaClass}
+            />
+          </label>
+
+          <button
+            type="button"
+            onClick={handleGradeStep6}
+            disabled={step6Prompt.trim() === "" || step6Status === "pending"}
+            className={cn(
+              primaryButtonClass,
+              step6Prompt.trim() !== "" && step6Status !== "pending"
+                ? "bg-slate-900 text-white hover:bg-slate-700"
+                : "cursor-not-allowed bg-slate-100 text-slate-400"
+            )}
+          >
+            {step6Status === "pending" ? (
+              <>
+                <RefreshIcon className="mr-2 h-4 w-4 animate-spin" />
+                Menilai...
+              </>
+            ) : (
+              "Nilai Prompt Saya"
+            )}
+          </button>
+
+          <GradeResultPanel status={step6Status} result={step6Result} error={step6Error} />
+
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <button
+              type="button"
+              onClick={() => goToStep(5)}
+              className="text-sm font-medium text-slate-600 hover:text-slate-900"
+            >
+              ← Kembali
+            </button>
+            <button
+              type="button"
+              onClick={() => goToStep(7)}
+              disabled={!completed[6]}
+              className={cn(
+                primaryButtonClass,
+                completed[6]
+                  ? "bg-slate-900 text-white hover:bg-slate-700"
+                  : "cursor-not-allowed bg-slate-100 text-slate-400"
+              )}
+            >
+              Lanjut ke Tantangan Anda Sendiri →
+            </button>
+          </div>
+        </div>
+      ) : null}
+
+      {activeStep === 7 ? (
+        <div className="space-y-4">
+          <div>
+            <h2 className="text-lg font-semibold text-slate-900">
+              Langkah 7 — Tantangan Anda Sendiri
+            </h2>
+            <p className="mt-1 text-sm text-slate-600">
+              Terakhir, pilih sendiri tugas mengajar yang relevan dengan
+              kelas Anda, lalu tulis dan nilai prompt-nya.
+            </p>
+          </div>
+
+          <label className="block text-sm">
+            <span className="mb-1 block font-medium text-slate-700">
+              Tugas yang ingin Anda buatkan prompt-nya
+            </span>
+            <input
+              type="text"
+              value={step7TaskDesc}
+              onChange={(e) => setStep7TaskDesc(e.target.value)}
+              placeholder="mis. Membuat rubrik penilaian presentasi kelompok kelas 6"
+              className="w-full rounded-md border border-slate-200 px-3 py-2 text-sm text-slate-800 shadow-sm focus:border-sky-400 focus:outline-none focus:ring-1 focus:ring-sky-400"
+            />
+          </label>
+
+          <label className="block text-sm">
+            <span className="mb-1 block font-medium text-slate-700">Prompt Anda</span>
+            <textarea
+              value={step7Prompt}
+              onChange={(e) => setStep7Prompt(e.target.value)}
+              rows={10}
+              placeholder="Tulis prompt lengkap Anda di sini..."
+              className={textareaClass}
+            />
+          </label>
+
+          <button
+            type="button"
+            onClick={handleGradeStep7}
+            disabled={
+              step7TaskDesc.trim() === "" || step7Prompt.trim() === "" || step7Status === "pending"
+            }
+            className={cn(
+              primaryButtonClass,
+              step7TaskDesc.trim() !== "" && step7Prompt.trim() !== "" && step7Status !== "pending"
+                ? "bg-slate-900 text-white hover:bg-slate-700"
+                : "cursor-not-allowed bg-slate-100 text-slate-400"
+            )}
+          >
+            {step7Status === "pending" ? (
+              <>
+                <RefreshIcon className="mr-2 h-4 w-4 animate-spin" />
+                Menilai...
+              </>
+            ) : (
+              "Nilai Prompt Saya"
+            )}
+          </button>
+
+          <GradeResultPanel status={step7Status} result={step7Result} error={step7Error} />
+
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <button
+              type="button"
+              onClick={() => goToStep(6)}
               className="text-sm font-medium text-slate-600 hover:text-slate-900"
             >
               ← Kembali

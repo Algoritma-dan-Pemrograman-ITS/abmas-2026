@@ -13,7 +13,7 @@ export default function Sesi4Page() {
       href="/sesi-4"
       eyebrow="Sesi 4 — Hands-on"
       title="Kelas Prompt: Buat Materi Bareng AI"
-      lead="Coba langsung 5 langkahnya di sini. Isi konteks kelas Anda, susun prompt, minta AI membuatkan materi, minta diperbaiki, lalu edit hasil akhirnya — semua dalam satu halaman ini."
+      lead="Coba langsung di sini. Isi konteks kelas Anda, susun prompt, minta AI membuatkan materi, minta diperbaiki, edit hasil akhirnya, lalu berlatih menulis prompt sendiri tanpa bantuan formulir — semua dalam satu halaman ini."
     >
       <Callout type="note">
         Ini adalah latihan penerapan langsung dari kerangka{" "}
@@ -22,6 +22,9 @@ export default function Sesi4Page() {
         memakai AI pilihan Anda sendiri (ChatGPT, Gemini, Claude, atau
         Copilot) &mdash; salin prompt yang sudah disusun, jalankan di sana,
         lalu tempel hasilnya kembali di sini untuk melanjutkan latihan.
+        Langkah 6 dan 7 menilai prompt Anda secara otomatis lewat AI yang
+        berjalan di server milik penyelenggara; jika servernya belum aktif,
+        Anda akan melihat pesan error yang jelas, bukan halaman yang macet.
       </Callout>
 
       <PromptLab />
