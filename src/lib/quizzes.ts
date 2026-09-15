@@ -112,48 +112,54 @@ export const sesi3Quiz: QuizQuestion[] = [
 export const sesi6Quiz: QuizQuestion[] = [
   {
     question:
-      "Apa prinsip paling sederhana soal privasi saat menggunakan AI?",
+      "Seorang guru ingin meminta AI menentukan siswa yang perlu dipanggil berdasarkan tabel berisi nama, nilai, absensi, dan catatan perilaku. Apa langkah paling tepat?",
     options: [
-      "Semua data boleh dimasukkan asal AI-nya gratis",
-      "Jangan memasukkan data pribadi atau dokumen sensitif hanya karena AI bisa memprosesnya",
-      "Data siswa boleh dimasukkan asal disimpan di HP pribadi guru",
-      "Privasi hanya berlaku untuk data guru, bukan siswa",
+      "Tempelkan semua data agar rekomendasi AI lebih lengkap",
+      "Jangan tempelkan data tersebut; gunakan pertimbangan guru dan, bila perlu, ringkasan kondisi kelas untuk meminta ide bantuan belajar",
+      "Ganti nama siswa dengan nomor lalu kirim semua detail lainnya",
+      "Minta AI memilih tiga siswa, lalu guru cukup menyetujui hasilnya",
     ],
     answer: 1,
     explanation:
-      "Kemampuan AI untuk memproses data bukan alasan untuk memasukkannya. Tanyakan dulu apakah data itu benar-benar dibutuhkan.",
+      "Data pribadi dan catatan perilaku tidak perlu ditempelkan untuk meminta ide pembelajaran. AI juga tidak boleh mengambil keputusan tentang siswa; keadaan kelas dan keputusan tetap pada guru.",
   },
   {
     question:
-      "Menghapus nama siswa dari data yang dikirim ke AI otomatis membuat data tersebut anonim. Benar atau salah?",
+      "Menghapus nama siswa dari data yang dikirim ke AI otomatis membuat data tersebut aman. Benar atau salah?",
     options: [
       "Benar, tanpa nama data selalu aman",
       "Salah — kombinasi info lain (kelas, nilai, kondisi khusus) masih bisa membuat identitas mudah ditebak",
       "Benar, selama nomor induk siswa juga dihapus",
-      "Tidak relevan, anonimisasi tidak penting",
+      "Tidak relevan, mengurangi data pengenal tidak penting",
     ],
     answer: 1,
     explanation:
-      "Jika hanya ada satu siswa dengan kombinasi ciri tertentu di suatu kelas, ia tetap bisa dikenali walau namanya sudah dihapus. Anonimisasi mengurangi risiko, bukan jaminan mutlak.",
+      "Jika hanya ada satu siswa dengan gabungan ciri tertentu di kelas, ia tetap bisa dikenali walau namanya sudah dihapus. Mengurangi data pengenal menurunkan risiko, tetapi bukan jaminan mutlak.",
   },
   {
     question:
-      "Pendekatan mana yang paling cocok ketika tujuan tugas adalah mengukur kemampuan argumentasi siswa TANPA bantuan AI?",
-    options: ["AI Prohibited", "AI Assisted", "AI Integrated", "AI Unlimited"],
-    answer: 0,
-    explanation:
-      "AI Prohibited cocok saat yang ingin diukur adalah kemampuan siswa sendiri. Pertanyaan intinya: kemampuan siapa yang sebenarnya sedang dinilai?",
-  },
-  {
-    question: "Apa prinsip utama yang menutup sesi ini?",
+      "Untuk tugas pengembangan ide proyek, guru mengizinkan AI untuk brainstorming, tetapi siswa harus mencatat bagian yang dibantu AI dan memperlihatkan revisinya. Pendekatan ini adalah…",
     options: [
-      "AI selalu benar sehingga tidak perlu diverifikasi",
-      "AI sebagai asisten, manusia sebagai pengambil keputusan",
-      "Semakin banyak AI digunakan, semakin baik hasilnya",
-      "Guru tidak perlu ikut campur jika siswa memakai AI",
+      "AI tidak boleh digunakan",
+      "AI sebagai alat bantu",
+      "AI sebagai bagian pembelajaran",
+      "AI boleh digunakan tanpa batas",
     ],
     answer: 1,
     explanation:
-      "AI dapat membantu menyusun, merangkum, dan memberi alternatif — tetapi keputusan pendidikan tetap membutuhkan judgment manusia.",
+      "Pada pilihan ini, AI dapat membantu sebagian proses, sedangkan siswa tetap mengambil keputusan dan bertanggung jawab atas karya akhirnya. Catatan penggunaan AI membuat prosesnya terbuka dan jelas.",
+  },
+  {
+    question:
+      "AI menyarankan bahwa siswa dari kelompok tertentu ‘biasanya kurang cocok’ untuk aktivitas presentasi. Apa respons guru yang paling tepat?",
+    options: [
+      "Gunakan saran itu karena AI memiliki banyak data",
+      "Tolak anggapan yang menyamaratakan itu, lalu periksa kebutuhan setiap siswa berdasarkan keadaan kelas",
+      "Minta AI mengulang saran yang sama dengan bahasa lebih halus",
+      "Buat aturan bahwa kelompok tersebut tidak boleh presentasi",
+    ],
+    answer: 1,
+    explanation:
+      "Jawaban AI dapat membawa anggapan yang tidak adil atau menyamaratakan. Guru perlu memeriksa kesesuaiannya dengan keadaan kelas, lalu mengambil keputusan berdasarkan kebutuhan siswa yang nyata.",
   },
 ];
