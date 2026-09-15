@@ -3,6 +3,11 @@ import { DocArticle } from "@/components/doc-article";
 import { H2 } from "@/components/content";
 import { Callout } from "@/components/callout";
 import { CaseActivity, type Case } from "@/components/case-activity";
+import { MistakeReveal } from "@/components/mistake-reveal";
+import { NextWordDemo } from "@/components/next-word-demo";
+import { CodeBlock } from "@/components/code-block";
+import { Quiz } from "@/components/quiz";
+import { sesi1Quiz } from "@/lib/quizzes";
 
 export const metadata: Metadata = {
   title: "Sesi 1: Mengenal LLM & AI dalam Pendidikan",
@@ -152,6 +157,11 @@ export default function Sesi1Page() {
         OpenAI), Gemini (Google), Claude (Anthropic), dan Copilot
         (Microsoft/GitHub).
       </p>
+      <p>
+        Coba lihat simulasinya langsung. Klik tombol di bawah beberapa kali
+        untuk melihat bagaimana LLM menyusun satu kalimat, kata demi kata:
+      </p>
+      <NextWordDemo />
 
       <H2>Kemampuan LLM</H2>
       <p>
@@ -164,6 +174,38 @@ export default function Sesi1Page() {
         yang cepat, bukan hasil akhir yang langsung dipakai. Bapak/Ibu Guru
         tetap perlu membaca, memeriksa, dan menyesuaikannya.
       </Callout>
+
+      <p>Contohnya, ini yang terjadi kalau seorang guru meminta bantuan LLM membuat soal:</p>
+      <CodeBlock
+        code="Buatkan 5 soal pilihan ganda IPA kelas 4 tentang siklus air, lengkap dengan kunci jawaban."
+        lang="text"
+        filename="Prompt guru"
+      />
+      <p>Dalam hitungan detik, LLM membalas draf seperti ini:</p>
+      <blockquote>
+        <p>
+          1. Air di permukaan bumi menguap karena panas matahari melalui
+          proses yang disebut ....
+          <br />
+          A. Kondensasi&nbsp;&nbsp;B. <strong>Evaporasi</strong>&nbsp;&nbsp;C.
+          Presipitasi&nbsp;&nbsp;D. Infiltrasi
+          <br />
+          <br />
+          2. Titik-titik air di awan yang berubah menjadi butiran hujan
+          disebut proses ....
+          <br />
+          A. Evaporasi&nbsp;&nbsp;B. Transpirasi&nbsp;&nbsp;C.{" "}
+          <strong>Presipitasi</strong>&nbsp;&nbsp;D. Kondensasi
+          <br />
+          <br />
+          <em>...dan 3 soal berikutnya, lengkap dengan kunci jawaban.</em>
+        </p>
+      </blockquote>
+      <p>
+        Draf ini sudah cukup baik sebagai titik awal, tapi guru tetap perlu
+        mengecek tingkat kesulitan, kesesuaian dengan materi yang sudah
+        diajarkan, dan ketepatan kunci jawabannya sebelum dipakai di kelas.
+      </p>
 
       <H2>Keterbatasan LLM</H2>
       <ul>
@@ -189,6 +231,35 @@ export default function Sesi1Page() {
         </li>
       </ul>
 
+      <H2>Aktivitas: Temukan Kesalahan AI</H2>
+      <p>
+        Di bawah ini adalah jawaban AI tentang Proklamasi Kemerdekaan
+        Indonesia, materi yang biasa diajarkan di kelas 5&ndash;6. Di
+        dalamnya ada <strong>3 kesalahan tersembunyi</strong>: 1 fakta yang
+        salah, 1 referensi yang dikarang (hallucination), dan 1 kesalahan
+        logika. Coba temukan sebelum mengklik reveal.
+      </p>
+      <MistakeReveal
+        text="Proklamasi kemerdekaan Indonesia dibacakan oleh Soekarno dan Moh. Hatta pada 17 Agustus 1944 di Jalan Pegangsaan Timur No. 56, Jakarta. Menurut catatan sejarawan Prof. Bambang Kusumo (2010) dalam buku Api Kemerdekaan, pembacaan naskah proklamasi dilakukan pukul 14.00 WIB setelah upacara militer besar-besaran yang dihadiri lebih dari 10.000 orang. Karena naskah proklamasi sudah dibacakan di depan umum, maka kemerdekaan Indonesia hari itu juga langsung diakui secara resmi oleh seluruh negara di dunia."
+        mistakes={[
+          {
+            label: "1. Fakta salah",
+            explanation:
+              "Proklamasi kemerdekaan Indonesia dibacakan pada 17 Agustus 1945, bukan 1944. Kesalahan tanggal seperti ini mudah terlewat kalau guru langsung memakai hasil AI tanpa dicek.",
+          },
+          {
+            label: "2. Referensi yang dikarang (hallucination)",
+            explanation:
+              '"Prof. Bambang Kusumo (2010)" dan buku "Api Kemerdekaan" adalah nama dan judul yang dikarang AI. Ini contoh khas hallucination: detail yang terdengar meyakinkan dan spesifik, padahal tidak pernah ada. Faktanya, proklamasi dibacakan sekitar pukul 10.00 WIB dalam acara sederhana di rumah Soekarno, bukan upacara militer besar dengan 10.000 orang.',
+          },
+          {
+            label: "3. Kesalahan logika",
+            explanation:
+              "Pembacaan proklamasi tidak otomatis membuat negara lain langsung mengakui kemerdekaan Indonesia hari itu juga. Pengakuan internasional adalah proses diplomatik yang butuh waktu bertahun-tahun setelah proklamasi.",
+          },
+        ]}
+      />
+
       <H2>Aktivitas: Bisa atau Tidak Bisa?</H2>
       <p>
         Untuk setiap kasus di bawah, pilih apakah menurut Bapak/Ibu tugas
@@ -207,6 +278,14 @@ export default function Sesi1Page() {
         <li>LLM punya keterbatasan: hallucination, bias, dan kurang memahami konteks personal.</li>
         <li>Keputusan pedagogis tetap ada di tangan guru.</li>
       </ul>
+
+      <H2>Mini Quiz</H2>
+      <p>
+        Uji pemahaman Bapak/Ibu tentang materi sesi ini, lalu lihat skor di
+        akhir.
+      </p>
+      <Quiz questions={sesi1Quiz} />
+
       <blockquote>
         <p>
           LLM adalah alat bantu berpikir, bukan pengganti judgment profesional

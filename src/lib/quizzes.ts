@@ -11,6 +11,66 @@ export type QuizQuestion = {
   explanation: string;
 };
 
+export const sesi1Quiz: QuizQuestion[] = [
+  {
+    question: "Apa yang membedakan AI dari software biasa?",
+    options: [
+      "AI selalu terhubung ke internet, software biasa tidak",
+      "AI belajar mengenali pola dari data, software biasa mengikuti aturan eksplisit yang ditulis programmer",
+      "AI hanya bisa dipakai di HP, software biasa hanya di komputer",
+      "Tidak ada bedanya, keduanya sama saja",
+    ],
+    answer: 1,
+    explanation:
+      "Software biasa mengikuti aturan \"jika A maka B\" yang ditulis eksplisit. AI belajar dari banyak contoh data untuk mengenali pola, lalu menerapkannya pada situasi baru.",
+  },
+  {
+    question:
+      "ChatGPT, Gemini, Claude, dan Copilot adalah contoh dari jenis AI apa?",
+    options: [
+      "Large Language Model (LLM), sejenis Generative AI",
+      "Software akuntansi",
+      "Sistem operasi",
+      "Antivirus",
+    ],
+    answer: 0,
+    explanation:
+      "Keempatnya adalah LLM (Large Language Model), yaitu AI generatif yang khusus bekerja dengan bahasa.",
+  },
+  {
+    question: "Secara sederhana, bagaimana cara kerja LLM menyusun jawaban?",
+    options: [
+      "Mencari jawaban persis dari database yang sudah tersimpan",
+      "Memprediksi satu kata paling mungkin berikutnya, berulang kali, berdasarkan pola bahasa yang dipelajarinya",
+      "Bertanya ke manusia secara langsung setiap kali menjawab",
+      "Menerjemahkan pertanyaan ke bahasa mesin lalu menjalankannya sebagai kode",
+    ],
+    answer: 1,
+    explanation:
+      "LLM bekerja seperti keyboard prediktif yang jauh lebih pintar: memprediksi kata paling mungkin berikutnya satu per satu, lalu mengulangi proses itu sampai jawabannya selesai.",
+  },
+  {
+    question:
+      "Seorang guru meminta AI menjelaskan sebuah peristiwa sejarah, lengkap dengan nama ahli dan judul buku sebagai sumber. Ternyata nama ahli dan buku itu tidak pernah ada. Ini contoh keterbatasan LLM yang disebut apa?",
+    options: ["Bias", "Hallucination", "Lag jaringan", "Bug software"],
+    answer: 1,
+    explanation:
+      "Hallucination adalah saat LLM \"mengarang\" jawaban yang terdengar meyakinkan (termasuk nama, kutipan, atau referensi) padahal salah atau tidak pernah ada.",
+  },
+  {
+    question: "Sikap yang paling tepat saat memakai LLM untuk membuat materi ajar adalah…",
+    options: [
+      "Langsung dipakai apa adanya karena AI jarang salah",
+      "Tidak dipakai sama sekali karena berisiko",
+      "Dipakai untuk draf awal, lalu tetap dibaca, diperiksa, dan disesuaikan guru",
+      "Dipakai hanya jika siswa tidak tahu",
+    ],
+    answer: 2,
+    explanation:
+      "LLM paling efektif untuk menghasilkan draf awal yang cepat, bukan hasil akhir. Keputusan pedagogis dan pemeriksaan akurasi tetap ada di tangan guru.",
+  },
+];
+
 export const sesi2Quiz: QuizQuestion[] = [
   {
     question:
